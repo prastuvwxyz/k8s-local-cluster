@@ -1,0 +1,17 @@
+*.swp
+*.swo
+*.tmp
+
+# OS ignores
+.DS_Store
+
+# IntelliJ workspace-specific
+.idea
+
+# Ignore all VSCode settings
+/.vscode/
+
+# Build output
+/bin/
+/tmp/
+/build
