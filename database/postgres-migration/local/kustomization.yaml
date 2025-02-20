@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+configMapGenerator:
+  - name: migration-part-1
+    namespace: database
+    files:
+      - ../base/public/V1__add_uuid_ossp.sql
+      - ../base/public/V2__create_table_stock_picking.sql
+
+resources:
+  - postgres-migration-secrets.yaml
+  - ../base/postgres-migration.yaml
