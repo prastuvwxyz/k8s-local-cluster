@@ -16,6 +16,14 @@ GITHUB_OWNER := prastuvwxyz
 GITHUB_REPO := k8s-local-cluster
 GITHUB_BRANCH := main
 
+# metric
+ALTINITY-METRICS-EXPORTER := altinity/metrics-exporter:0.23.3
+
+# postgres
+CLOUDNATIVE-PG := ghcr.io/cloudnative-pg/cloudnative-pg:1.25.0
+CLOUDNATIVE-PG-POSTGRES := ghcr.io/cloudnative-pg/postgresql:16.7-bookworm
+FLYWAY := flyway/flyway:10.1-alpine
+
 setup-tools: install-common-tools pull-docker-images
 k8s-up: validate k8s-create-cluster k8s-load-docker-image k8s-fluxcd-bootstrap k8s-init-telepresence
 k8s-down: k8s-stop-telepresence k8s-delete-cluster
@@ -43,6 +51,11 @@ pull-docker-images:
 	@docker pull $(FLUXCD_NOTIFICATION)
 	@docker pull $(FLUXCD_KUSTOMIZE)
 	@docker pull $(FLUXCD_HELM)
+	@docker pull $(ALTINITY-METRICS-EXPORTER)
+	@docker pull $(CLOUDNATIVE-PG)
+	@docker pull $(CLOUDNATIVE-PG-POSTGRES)
+	@docker pull $(FLYWAY)
+	
 
 k8s-wait-local-path:
 	@kubectl wait --timeout=120s --namespace=local-path-storage --for=condition=Available deployment/local-path-provisioner
@@ -61,6 +74,10 @@ k8s-load-docker-image:
 	@kind load docker-image $(TELEPRESENCE_IMAGE) --name $(CLUSTER_NAME)
 	@kind load docker-image $(TELEPRESENCE_MANAGER) --name $(CLUSTER_NAME)
 	@kind load docker-image $(TELEPRESENCE_AGENT) --name $(CLUSTER_NAME)
+	@kind load docker-image $(ALTINITY-METRICS-EXPORTER) --name $(CLUSTER_NAME)
+	@kind load docker-image $(CLOUDNATIVE-PG) --name $(CLUSTER_NAME)
+	@kind load docker-image $(CLOUDNATIVE-PG-POSTGRES) --name $(CLUSTER_NAME)
+	@kind load docker-image $(FLYWAY) --name $(CLUSTER_NAME)
 
 k8s-fluxcd-bootstrap:
 	@echo "Bootstrapping FluxCD..."
