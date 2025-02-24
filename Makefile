@@ -24,6 +24,11 @@ CLOUDNATIVE-PG := ghcr.io/cloudnative-pg/cloudnative-pg:1.25.0
 CLOUDNATIVE-PG-POSTGRES := ghcr.io/cloudnative-pg/postgresql:16.7-bookworm
 FLYWAY := flyway/flyway:10.1-alpine
 
+# strimzi kafka
+STRIMZI-OPERATOR := quay.io/strimzi/operator:0.40.0
+STRIMZI-KAFKA := quay.io/strimzi/kafka:0.40.0-kafka-3.7.0
+STRIMZI-KAFKA-CONNECT := strimzi-kafka-connect:0.40.0-kafka-3.7.0
+
 setup-tools: install-common-tools pull-docker-images
 k8s-up: validate k8s-create-cluster k8s-load-docker-image k8s-fluxcd-bootstrap k8s-init-telepresence
 k8s-down: k8s-stop-telepresence k8s-delete-cluster
@@ -51,6 +56,9 @@ pull-docker-images:
 	@docker pull $(FLUXCD_NOTIFICATION)
 	@docker pull $(FLUXCD_KUSTOMIZE)
 	@docker pull $(FLUXCD_HELM)
+	@docker pull $(STRIMZI-OPERATOR)
+	@docker pull $(STRIMZI-KAFKA)
+	@docker build --progress=plain -f ./docker-images/strimzi-kafka-connect.Dockerfile --tag $(STRIMZI-KAFKA-CONNECT) .
 	@docker pull $(ALTINITY-METRICS-EXPORTER)
 	@docker pull $(CLOUDNATIVE-PG)
 	@docker pull $(CLOUDNATIVE-PG-POSTGRES)
@@ -74,6 +82,9 @@ k8s-load-docker-image:
 	@kind load docker-image $(TELEPRESENCE_IMAGE) --name $(CLUSTER_NAME)
 	@kind load docker-image $(TELEPRESENCE_MANAGER) --name $(CLUSTER_NAME)
 	@kind load docker-image $(TELEPRESENCE_AGENT) --name $(CLUSTER_NAME)
+	@kind load docker-image $(STRIMZI-OPERATOR) --name $(CLUSTER_NAME)
+	@kind load docker-image $(STRIMZI-KAFKA) --name $(CLUSTER_NAME)
+	@kind load docker-image $(STRIMZI-KAFKA-CONNECT) --name $(CLUSTER_NAME)
 	@kind load docker-image $(ALTINITY-METRICS-EXPORTER) --name $(CLUSTER_NAME)
 	@kind load docker-image $(CLOUDNATIVE-PG) --name $(CLUSTER_NAME)
 	@kind load docker-image $(CLOUDNATIVE-PG-POSTGRES) --name $(CLUSTER_NAME)
@@ -93,6 +104,8 @@ k8s-fluxcd-bootstrap:
 k8s-init-telepresence:
 	@telepresence --context=kind-$(CLUSTER_NAME) helm install
 	@telepresence --context=kind-$(CLUSTER_NAME) connect
+	telepresence --context=kind-k8s-local-cluster helm install
+	telepresence --context=kind-k8s-local-cluster connect
 
 k8s-stop-telepresence:
 	@telepresence quit -s || true

@@ -3,7 +3,7 @@
 --
 
 CREATE TABLE stock_picking (
-    id integer NOT NULL,
+    id integer NOT NULL PRIMARY KEY,
     backorder_id integer,
     return_id integer,
     group_id integer,
