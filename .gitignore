@@ -11,6 +11,9 @@
 # Ignore all VSCode settings
 /.vscode/
 
+# Ignore learning plans docs
+/docs/learning-plans
+
 # Build output
 /bin/
 /tmp/

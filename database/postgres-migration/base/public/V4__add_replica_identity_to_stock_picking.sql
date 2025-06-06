@@ -1,1 +1,0 @@
-ALTER TABLE public.stock_picking REPLICA IDENTITY FULL;
