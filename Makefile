@@ -1,5 +1,5 @@
 # Makefile for managing a local Kubernetes cluster using Kind
-include scripts/*
+include scripts/*.mk
 
 # Variables
 KIND_CLUSTER := local
@@ -38,6 +38,25 @@ help:
 	@echo "Image Management:"
 	@echo "  preload-fluxcd           - Preload FluxCD images into the Kind cluster"
 	@echo "  preload-telepresence     - Preload Telepresence images into the Kind cluster"
+	@echo "  preload-cnpg             - Preload CloudNativePG operator and PostgreSQL images into the Kind cluster"
+	@echo ""
+	@echo "PostgreSQL Management:"
+	@echo "  install-cnpg             - Install CloudNativePG Operator"
+	@echo "  install-cnpg-crds        - Install CloudNativePG CRDs directly (faster than waiting for Helm)"
+	@echo "  deploy-postgres          - Deploy PostgreSQL with 1 replica"
+	@echo "  cnpg-status              - Check the status of CloudNativePG Operator and PostgreSQL instances"
+	@echo "  pg-disk-usage            - Monitor PostgreSQL disk usage"
+	@echo "  pg-backups               - Check PostgreSQL backup status"
+	@echo "  pg-restore BACKUP=name   - Restore PostgreSQL from a backup"
+	@echo "  pg-connect USER=name DB=dbname - Connect to PostgreSQL with specified user and database"
+	@echo "  pg-connect-app           - Connect to PostgreSQL as app_user to the app database"
+	@echo "  pg-port-forward PORT=5432 - Create port-forward to PostgreSQL (foreground)"
+	@echo "  pg-port-forward-bg PORT=5432 - Create port-forward to PostgreSQL (background)"
+	@echo "  pg-logs LINES=100        - View PostgreSQL logs (follow)"
+	@echo "  pg-logs-tail LINES=100   - View PostgreSQL logs (no follow)"
+	@echo "  pg-export DB=app FILE=export.sql - Export a PostgreSQL database"
+	@echo "  pg-import DB=app FILE=import.sql - Import a PostgreSQL database"
+	@echo "  pg-verify                - Run comprehensive verification of PostgreSQL setup"
 
 # Create a new Kind cluster
 .PHONY: create-cluster
@@ -102,15 +121,17 @@ install-dashboard:
 .PHONY: up
 up:
 	@echo "Setting up the complete environment..."
-	@echo "Step 1/5: Creating Kind cluster..."
+	@echo "Step 1/6: Creating Kind cluster..."
 	@make create-cluster
-	@echo "Step 2/5: Preloading FluxCD images..."
+	@echo "Step 2/6: Preloading FluxCD images..."
 	@make preload-fluxcd
-	@echo "Step 3/5: Preloading Telepresence images..."
+	@echo "Step 3/6: Preloading Telepresence images..."
 	@make preload-telepresence
-	@echo "Step 4/5: Bootstrapping Flux CD..."
+	@echo "Step 4/6: Preloading CloudNativePG images..."
+	@make preload-cnpg
+	@echo "Step 5/6: Bootstrapping Flux CD..."
 	@make bootstrap-flux
-	@echo "Step 5/5: Connecting Telepresence..."
+	@echo "Step 6/6: Connecting Telepresence..."
 	@make connect-telepresence
 	@echo "Environment setup completed successfully!"
 

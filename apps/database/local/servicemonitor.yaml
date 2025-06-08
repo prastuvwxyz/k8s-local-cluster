@@ -1,0 +1,24 @@
+# Only apply if ServiceMonitor CRD is available
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: postgres-metrics
+  namespace: database
+  labels:
+    app.kubernetes.io/name: postgres-cluster
+    app.kubernetes.io/part-of: cloudnative-pg
+  annotations:
+    # This annotation ensures this resource is only applied if the ServiceMonitor CRD exists
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  selector:
+    matchLabels:
+      postgresql: postgres-cluster
+      role: primary
+  endpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics
+  namespaceSelector:
+    matchNames:
+      - database

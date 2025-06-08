@@ -1,0 +1,18 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cloudnative-pg-ks
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: infra-ks
+  interval: 10m
+  retryInterval: 1m
+  timeout: 5m
+  sourceRef:
+    kind: OCIRepository
+    name: infra-source
+  path: ./infrastructure/operator/cnpg/local
+  prune: true
+  wait: true

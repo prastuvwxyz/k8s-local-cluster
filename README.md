@@ -186,15 +186,72 @@ This will create a Flux kustomization for your repository.
 
 ### Directory Structure
 
-The Flux CD configuration is organized as follows:
+The repository is organized following the GitOps and Kustomize base/overlay pattern:
 
-- `clusters/local-cluster/`: Contains the Flux CD configuration for the local-cluster
+- `clusters/local/`: Contains the Flux CD configuration for the local cluster
+- `charts/`: Contains Helm repositories and CRDs definitions
+  - `helm-repository/`: Helm repository definitions for various components
+  - `crds/`: Custom Resource Definitions
+- `infrastructure/`: Contains infrastructure components
+  - `operator/cnpg/`: CloudNativePG operator configuration
+    - `base/`: Base configuration for the operator
+    - `local/`: Local environment-specific overrides
+- `apps/`: Contains application components
+  - `database/`: PostgreSQL database cluster configuration
+    - `base/`: Base configuration for PostgreSQL
+    - `local/`: Local environment-specific overrides
 
 ### GitOps Workflow
 
-1. Make changes to the Kubernetes manifests in the `clusters/` directory
+1. Make changes to the Kubernetes manifests in the `clusters/`, `infrastructure/` or `apps/` directories
 2. Commit and push the changes to your GitHub repository
 3. Flux CD will automatically detect the changes and apply them to your cluster
+
+## CloudNativePG
+
+This repository includes support for running PostgreSQL using the CloudNativePG operator.
+
+### Preload CloudNativePG Images
+
+```bash
+make preload-cnpg
+```
+
+This will preload the CloudNativePG operator and PostgreSQL images into your Kind cluster.
+
+### Install CloudNativePG Operator
+
+```bash
+make install-cnpg
+```
+
+This will install the CloudNativePG operator in your cluster in the `cnpg-system` namespace.
+
+### Deploy PostgreSQL with 1 Replica
+
+```bash
+make deploy-postgres
+```
+
+This will deploy a PostgreSQL instance with 1 replica in the `database` namespace.
+
+### Check CloudNativePG Status
+
+```bash
+make cnpg-status
+```
+
+This will show the status of the CloudNativePG operator and PostgreSQL instances.
+
+### Connecting to PostgreSQL
+
+```bash
+# Connect to PostgreSQL
+kubectl -n database exec -it postgres-cluster-1 -- psql -U postgres
+
+# Get the connection string
+kubectl get secrets -n database postgres-cluster-app -o jsonpath='{.data.uri}' | base64 -d
+```
 
 ## Troubleshooting
 
@@ -205,3 +262,4 @@ If you encounter issues:
 3. Make sure you have sufficient resources (CPU, memory) for running the cluster
 4. For specific Kind errors, refer to the [Kind troubleshooting guide](https://kind.sigs.k8s.io/docs/user/known-issues/)
 5. For Flux CD issues, check the Flux logs with `kubectl logs -n flux-system deployment/source-controller` or `kubectl logs -n flux-system deployment/kustomize-controller`
+6. For PostgreSQL issues, check the CloudNativePG operator logs with `kubectl logs -n cnpg-system deployment/cnpg-controller-manager` and PostgreSQL pod logs with `kubectl logs -n database postgres-cluster-1`

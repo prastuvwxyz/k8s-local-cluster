@@ -1,0 +1,13 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Backup
+metadata:
+  name: postgres-backup
+  namespace: database
+spec:
+  cluster:
+    name: postgres-cluster
+  method: volumeSnapshot
+  online: true
+  target:
+    serverName: postgres-cluster
+  backupOwnerReference: self
