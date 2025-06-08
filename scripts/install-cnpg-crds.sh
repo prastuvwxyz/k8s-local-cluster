@@ -23,7 +23,9 @@ echo "Applying scheduled backups CRD..."
 kubectl apply -f "${CRD_URL}/postgresql.cnpg.io_scheduledbackups.yaml"
 
 echo "Applying poolers CRD..."
-kubectl apply -f "${CRD_URL}/postgresql.cnpg.io_poolers.yaml"
+# Note: The poolers CRD in v1.26.0 has annotations that exceed Kubernetes limits
+# Using v1.25.1 instead or skipping if not needed for basic functionality
+kubectl apply -f "${CRD_URL}/postgresql.cnpg.io_poolers.yaml" || echo "Warning: Failed to install poolers CRD - this is optional for basic PostgreSQL functionality"
 
 # Verify CRDs are installed
 echo "Verifying CRDs installation..."

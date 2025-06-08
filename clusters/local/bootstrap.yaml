@@ -1,17 +1,15 @@
 ---
-# Bootstrap Components: OCI Repository for infrastructure sync
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: OCIRepository
+# Bootstrap Components: Git Repository for infrastructure sync
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
 metadata:
   name: platform-source
   namespace: flux-system
 spec:
-  insecure: true
   interval: 1m
-  provider: generic
   ref:
-    tag: local
-  url: oci://kind-registry:5000/platform-sync
+    branch: main
+  url: https://github.com/prastuvwxyz/k8s-local-cluster
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -22,9 +20,9 @@ spec:
   interval: 1h
   retryInterval: 1m
   timeout: 5m
-  path: ./
+  path: ./clusters/local
   prune: true
   wait: true
   sourceRef:
-    kind: OCIRepository
+    kind: GitRepository
     name: platform-source
