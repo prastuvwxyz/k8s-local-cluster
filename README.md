@@ -14,33 +14,33 @@ This repository follows Kubernetes GitOps best practices with a clear separation
 k8s-local-cluster/
 ├── clusters/local/                    # Flux CD configurations
 │   ├── bootstrap.yaml                # OCI repository and sync setup
-│   ├── platform.yaml                # Platform component deployment
-│   ├── infrastructure.yaml          # Infrastructure operator deployment  
-│   └── workloads.yaml               # Application workload deployment
+│   ├── platform.yaml                 # Platform component deployment
+│   ├── infrastructure.yaml           # Infrastructure operator deployment  
+│   └── apps.yaml                     # Application deployment
 ├── platform/                         # Platform components (foundational)
 │   ├── base/custom-resource-definitions/  # CRDs for operators
 │   ├── base/helm-repositories/            # Third-party chart repos
 │   └── overlays/local/                    # Local environment config
-├── infrastructure/                    # Infrastructure operators & services
-│   └── overlays/local/cloudnative-pg/     # PostgreSQL operator
-├── workloads/                        # Application workloads
-│   └── overlays/local/postgresql-database/ # PostgreSQL database instances
-└── scripts/                         # Development and management scripts
+├── infrastructure/                   # Infrastructure operators & services
+│   ├── cloudnative-pg/               # CloudNativePG operator config
+│   │   ├── base/                     # Base operator config
+│   │   └── local/                    # Local patches/overrides
+├── apps/                             # Application workloads
+│   └── database/                     # Database workloads (e.g. PostgreSQL)
+│       └── postgresql/
+│           ├── base/                 # Base PostgreSQL cluster config
+│           └── local/                # Local patches, secrets, monitoring
+└── scripts/                          # Development and management scripts
 ```
 
-### GitOps Deployment Flow
+### Kustomize Overlays Pattern
+- All environment-specific configuration (local, staging, production) is placed in the respective `local/`, `staging/`, or `production/` overlay folders under each domain (platform, infrastructure, apps).
+- The `base/` folder contains reusable, environment-agnostic configuration.
 
-The architecture follows a proper dependency chain:
-
-```
-1. Bootstrap (OCI Repository) 
-   ↓
-2. Platform Components (CRDs, Helm repositories)
-   ↓  
-3. Infrastructure Operators (CloudNative PostgreSQL)
-   ↓
-4. Application Workloads (PostgreSQL databases)
-```
+### GitOps Workflow
+1. Make changes to the Kubernetes manifests in the `clusters/`, `infrastructure/`, or `apps/` directories
+2. Commit and push the changes to your GitHub repository
+3. Flux CD will automatically detect the changes and apply them to your cluster
 
 ## Usage
 
@@ -207,26 +207,39 @@ make create-flux-kustomization
 
 This will create a Flux kustomization for your repository.
 
-### Directory Structure
+## Directory Structure
 
 The repository is organized following the GitOps and Kustomize base/overlay pattern:
 
-- `clusters/local/`: Contains the Flux CD configuration for the local cluster
-- `charts/`: Contains Helm repositories and CRDs definitions
-  - `helm-repository/`: Helm repository definitions for various components
-  - `crds/`: Custom Resource Definitions
-- `infrastructure/`: Contains infrastructure components
-  - `operator/cnpg/`: CloudNativePG operator configuration
-    - `base/`: Base configuration for the operator
-    - `local/`: Local environment-specific overrides
-- `apps/`: Contains application components
-  - `database/`: PostgreSQL database cluster configuration
-    - `base/`: Base configuration for PostgreSQL
-    - `local/`: Local environment-specific overrides
+```
+k8s-local-cluster/
+├── clusters/local/                    # Flux CD configurations for local cluster
+│   ├── bootstrap.yaml                # OCI repository and sync setup
+│   ├── platform.yaml                 # Platform component deployment
+│   ├── infrastructure.yaml           # Infrastructure operator deployment  
+│   └── apps.yaml                     # Application deployment
+├── platform/                         # Platform components (foundational)
+│   ├── base/custom-resource-definitions/  # CRDs for operators
+│   ├── base/helm-repositories/            # Third-party chart repos
+│   └── overlays/local/                    # Local environment config
+├── infrastructure/                   # Infrastructure operators & services
+│   ├── cloudnative-pg/               # CloudNativePG operator config
+│   │   ├── base/                     # Base operator config
+│   │   └── local/                    # Local patches/overrides
+├── apps/                             # Application workloads
+│   └── database/                     # Database workloads (e.g. PostgreSQL)
+│       └── postgresql/
+│           ├── base/                 # Base PostgreSQL cluster config
+│           └── local/                # Local patches, secrets, monitoring
+└── scripts/                          # Development and management scripts
+```
+
+### Kustomize Overlays Pattern
+- All environment-specific configuration (local, staging, production) is placed in the respective `local/`, `staging/`, or `production/` overlay folders under each domain (platform, infrastructure, apps).
+- The `base/` folder contains reusable, environment-agnostic configuration.
 
 ### GitOps Workflow
-
-1. Make changes to the Kubernetes manifests in the `clusters/`, `infrastructure/` or `apps/` directories
+1. Make changes to the Kubernetes manifests in the `clusters/`, `infrastructure/`, or `apps/` directories
 2. Commit and push the changes to your GitHub repository
 3. Flux CD will automatically detect the changes and apply them to your cluster
 

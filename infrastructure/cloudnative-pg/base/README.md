@@ -21,3 +21,8 @@ The base configuration provides a shared foundation that can be customized for d
 - The base configuration is not meant to be directly applied to the cluster. Instead, it should be referenced by environment-specific overlays
 - Changes to the base configuration affect all environments that reference it
 - Environment-specific settings should be defined in the respective environment overlay (e.g., `local/`)
+
+## Overlays Pattern
+
+- All environment-specific configuration (local, staging, production) is placed in the respective overlay folder (e.g., `local/`).
+- The `base/` folder contains reusable, environment-agnostic configuration.

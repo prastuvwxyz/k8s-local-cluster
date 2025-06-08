@@ -1,8 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-metadata:
-  name: infrastructure-base
-  annotations:
-    config.kubernetes.io/local-config: "true"
-
-# Infrastructure base resources will be defined by overlays

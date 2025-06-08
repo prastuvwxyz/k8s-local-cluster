@@ -121,17 +121,15 @@ install-dashboard:
 .PHONY: up
 up:
 	@echo "Setting up the complete environment..."
-	@echo "Step 1/6: Creating Kind cluster..."
+	@echo "Step 1/5: Creating Kind cluster..."
 	@make create-cluster
-	@echo "Step 2/6: Preloading FluxCD images..."
+	@echo "Step 2/5: Preloading FluxCD images..."
 	@make preload-fluxcd
-	@echo "Step 3/6: Preloading Telepresence images..."
-	@make preload-telepresence
-	@echo "Step 4/6: Preloading CloudNativePG images..."
+	@echo "Step 3/5: Preloading CloudNativePG images..."
 	@make preload-cnpg
-	@echo "Step 5/6: Bootstrapping Flux CD..."
+	@echo "Step 4/5: Bootstrapping Flux CD..."
 	@make bootstrap-flux
-	@echo "Step 6/6: Connecting Telepresence..."
+	@echo "Step 5/5: Connecting Telepresence..."
 	@make connect-telepresence
 	@echo "Environment setup completed successfully!"
 

@@ -1,13 +1,11 @@
 apiVersion: postgresql.cnpg.io/v1
-kind: ScheduledBackup
+kind: Backup
 metadata:
-  name: postgres-scheduled-backup
+  name: database-postgres-backup
   namespace: database
 spec:
   cluster:
     name: postgres-cluster
-  immediate: true
   method: volumeSnapshot
-  schedule: "0 0 * * *"
   online: true
-  suspend: false
+  target: primary

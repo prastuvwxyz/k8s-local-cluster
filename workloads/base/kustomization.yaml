@@ -1,8 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-metadata:
-  name: workloads-base
-  annotations:
-    config.kubernetes.io/local-config: "true"
-
-# Workload base resources will be defined by overlays

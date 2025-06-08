@@ -1,28 +1,16 @@
 ---
-# Bootstrap Components: Git Repository for infrastructure sync
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
-metadata:
-  name: platform-source
-  namespace: flux-system
-spec:
-  interval: 1m
-  ref:
-    branch: main
-  url: https://github.com/prastuvwxyz/k8s-local-cluster
----
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: bootstrap-sync
+  name: bootstrap
   namespace: flux-system
 spec:
-  interval: 1h
+  interval: 10m
   retryInterval: 1m
   timeout: 5m
-  path: ./clusters/local
-  prune: true
-  wait: true
   sourceRef:
     kind: GitRepository
-    name: platform-source
+    name: flux-system
+  path: ./bootstrap/
+  prune: true
+  wait: true

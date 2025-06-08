@@ -5,13 +5,7 @@ This directory contains the configuration for the CloudNativePG operator using a
 ## Structure
 
 - `base/`: Contains the base configuration for the CloudNativePG operator
-  - `namespace.yaml`: Creates the namespace for the operator
-  - `helm-release.yaml`: Defines the HelmRelease resource for installing the operator
-  - `kustomization.yaml`: Kustomization file for the base directory
-
 - `local/`: Contains environment-specific overrides for local development
-  - `helm-release-patch.yaml`: Patches the HelmRelease resource with local-specific settings
-  - `kustomization.yaml`: Kustomization file that references the base and applies patches
 
 ## Usage
 
@@ -37,3 +31,7 @@ For local development, the following settings are modified:
 To modify the configuration:
 1. For changes that should apply to all environments, edit the files in the `base/` directory
 2. For environment-specific changes, edit or add patches in the respective environment directory (e.g., `local/`)
+
+## Overlays Pattern
+- All environment-specific configuration (local, staging, production) is placed in the respective overlay folder (e.g., `local/`).
+- The `base/` folder contains reusable, environment-agnostic configuration.

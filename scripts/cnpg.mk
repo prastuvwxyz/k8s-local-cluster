@@ -2,7 +2,7 @@
 .PHONY: install-cnpg
 install-cnpg: preload-cnpg install-cnpg-crds
 	@echo "Installing CloudNativePG Operator..."
-	@kubectl kustomize infrastructure/overlays/local/cloudnative-pg/local | kubectl apply -f -
+	@kubectl kustomize infrastructure/cloudnative-pg/local | kubectl apply -f -
 	@echo "CloudNativePG Operator installed successfully!"
 
 .PHONY: install-cnpg-crds
@@ -15,11 +15,11 @@ deploy-postgres: install-cnpg
 	@echo "Checking if CRDs are available before deploying PostgreSQL..."
 	@./scripts/check-crds.sh || (echo "Error: CloudNativePG CRDs not available. Try running 'make install-cnpg-crds'" && exit 1)
 	@echo "Creating namespace and secrets first..."
-	@kubectl apply -f workloads/overlays/local/postgresql-database/base/namespace.yaml
-	@kubectl apply -f workloads/overlays/local/postgresql-database/local/superuser-secret.yaml
-	@kubectl apply -f workloads/overlays/local/postgresql-database/local/user-secret.yaml
+	@kubectl apply -f apps/database/postgresql/base/namespace.yaml
+	@kubectl apply -f apps/database/postgresql/local/postgres-superuser-secret.yaml
+	@kubectl apply -f apps/database/postgresql/local/postgres-user-secret.yaml
 	@echo "Deploying PostgreSQL instance with 1 replica..."
-	@kubectl kustomize workloads/overlays/local/postgresql-database/local | kubectl apply -f -
+	@kubectl kustomize apps/database/postgresql/local | kubectl apply -f -
 	@echo "PostgreSQL deployment initiated. Checking status..."
 	@kubectl wait --namespace database --for=condition=Ready clusters.postgresql.cnpg.io postgres-cluster --timeout=300s || true
 	@echo "You can check the status with: kubectl get clusters.postgresql.cnpg.io -n database"
