@@ -8,6 +8,4 @@ spec:
     name: postgres-cluster
   method: volumeSnapshot
   online: true
-  target:
-    serverName: postgres-cluster
-  backupOwnerReference: self
+  target: postgres-cluster

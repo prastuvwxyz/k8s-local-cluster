@@ -30,5 +30,5 @@ spec:
   monitoring:
     enablePodMonitor: true
     customQueriesConfigMap:
-      name: postgres-custom-metrics
+    - name: postgres-custom-metrics
       key: custom-queries.yaml
