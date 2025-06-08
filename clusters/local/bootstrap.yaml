@@ -1,8 +1,9 @@
 ---
+# Bootstrap Components: OCI Repository for infrastructure sync
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: OCIRepository
 metadata:
-  name: infra-source
+  name: platform-source
   namespace: flux-system
 spec:
   insecure: true
@@ -10,12 +11,12 @@ spec:
   provider: generic
   ref:
     tag: local
-  url: oci://kind-registry:5000/infra-sync
+  url: oci://kind-registry:5000/platform-sync
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: infra-ks
+  name: bootstrap-sync
   namespace: flux-system
 spec:
   interval: 1h
@@ -26,4 +27,4 @@ spec:
   wait: true
   sourceRef:
     kind: OCIRepository
-    name: infra-source
+    name: platform-source

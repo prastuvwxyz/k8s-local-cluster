@@ -1,19 +1,17 @@
 ---
-# Infrastructure Components: Operators and infrastructure services
+# Platform Components: CRDs, Helm Repositories, and other foundational resources
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: infrastructure-operators
+  name: platform-components
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: platform-components
   interval: 10m
   retryInterval: 1m
   timeout: 5m
   sourceRef:
     kind: OCIRepository
     name: platform-source
-  path: ./infrastructure/overlays/local
+  path: ./platform/overlays/local
   prune: true
   wait: true

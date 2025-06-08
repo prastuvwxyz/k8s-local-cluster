@@ -1,23 +1,46 @@
-# Kubernetes Local Cluster with Kind
+# Kubernetes Local Cluster with GitOps
 
-This repository contains configuration and scripts for setting up a local Kubernetes cluster using [Kind](https://kind.sigs.k8s.io/) (Kubernetes IN Docker).
+This repository contains a production-ready local Kubernetes development environment using:
+- **[Kind](https://kind.sigs.k8s.io/)** - Kubernetes IN Docker for local clusters
+- **[Flux CD](https://fluxcd.io/)** - GitOps continuous delivery
+- **[Telepresence](https://www.telepresence.io/)** - Local development proxy
+- **[CloudNative PostgreSQL](https://cloudnative-pg.io/)** - PostgreSQL operator
 
-## Prerequisites
+## GitOps Architecture
 
-Before you begin, make sure you have the following tools installed:
+This repository follows Kubernetes GitOps best practices with a clear separation of concerns:
 
-- [Docker](https://docs.docker.com/get-docker/)
-- [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-- [Make](https://www.gnu.org/software/make/) (usually pre-installed on most systems)
-- [Flux CLI](https://fluxcd.io/docs/installation/) (optional, can be installed using the Makefile)
+```
+k8s-local-cluster/
+├── clusters/local/                    # Flux CD configurations
+│   ├── bootstrap.yaml                # OCI repository and sync setup
+│   ├── platform.yaml                # Platform component deployment
+│   ├── infrastructure.yaml          # Infrastructure operator deployment  
+│   └── workloads.yaml               # Application workload deployment
+├── platform/                         # Platform components (foundational)
+│   ├── base/custom-resource-definitions/  # CRDs for operators
+│   ├── base/helm-repositories/            # Third-party chart repos
+│   └── overlays/local/                    # Local environment config
+├── infrastructure/                    # Infrastructure operators & services
+│   └── overlays/local/cloudnative-pg/     # PostgreSQL operator
+├── workloads/                        # Application workloads
+│   └── overlays/local/postgresql-database/ # PostgreSQL database instances
+└── scripts/                         # Development and management scripts
+```
 
-## Cluster Configuration
+### GitOps Deployment Flow
 
-The cluster is configured in the `kind-config.yaml` file with:
-- 1 control-plane node
-- 2 worker nodes
-- Port mappings for HTTP (80) and HTTPS (443) on the control-plane node
+The architecture follows a proper dependency chain:
+
+```
+1. Bootstrap (OCI Repository) 
+   ↓
+2. Platform Components (CRDs, Helm repositories)
+   ↓  
+3. Infrastructure Operators (CloudNative PostgreSQL)
+   ↓
+4. Application Workloads (PostgreSQL databases)
+```
 
 ## Usage
 

@@ -1,24 +1,31 @@
 # Infrastructure Components
 
-This directory contains infrastructure components for the Kubernetes cluster.
+This directory contains infrastructure operators and services that provide foundational capabilities for workloads.
 
-## Operator
+## Structure
 
-The `operator` directory contains Kubernetes operators that provide specific functionality to the cluster:
+```
+infrastructure/
+├── base/                        # Base infrastructure (shared resources)
+│   └── kustomization.yaml
+└── overlays/
+    └── local/                   # Local development configuration
+        ├── kustomization.yaml
+        └── cloudnative-pg/      # CloudNative PostgreSQL operator
+            ├── base/            # Base operator configuration
+            └── local/           # Local patches and overrides
+```
 
-### CloudNativePG (cnpg)
+## Components
 
-The CloudNativePG operator is located in the `operator/cnpg` directory and includes:
+### CloudNative PostgreSQL Operator
+- Helm release configuration
+- Namespace setup
+- Local patches for development
 
-- `namespace.yaml`: Creates the namespace for the CloudNativePG operator
-- `helm-repository.yaml`: Configures the Helm repository for CloudNativePG 
-- `helm-release.yaml`: Deploys the CloudNativePG operator using Helm
-- `kustomization.yaml`: Kustomize configuration to deploy all the above resources
+## Deployment Order
 
-The CloudNativePG operator manages PostgreSQL clusters in Kubernetes, providing features like:
-
-- High availability
-- Disaster recovery
-- Monitoring
-- Backups and point-in-time recovery
-- Rolling updates
+Infrastructure components are deployed after platform components:
+1. Platform Components (CRDs, Helm repos)
+2. **Infrastructure Operators** ← You are here
+3. Application Workloads

@@ -1,19 +1,19 @@
 ---
+# Application Workloads: Database and other application services
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: database-pg
+  name: workload-postgresql
   namespace: flux-system
 spec:
   dependsOn:
-    - name: infra-ks
-    - name: cloudnative-pg-ks
+    - name: infrastructure-operators
   interval: 10m
   retryInterval: 1m
   timeout: 5m
   sourceRef:
     kind: OCIRepository
-    name: infra-source
-  path: ./database/local
+    name: platform-source
+  path: ./workloads/overlays/local
   prune: true
   wait: true  
