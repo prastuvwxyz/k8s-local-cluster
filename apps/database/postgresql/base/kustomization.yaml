@@ -3,5 +3,3 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - cluster.yaml
-  - backup.yaml
-  - scheduled-backup.yaml

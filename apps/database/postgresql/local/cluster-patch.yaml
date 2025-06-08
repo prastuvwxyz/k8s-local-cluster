@@ -4,20 +4,19 @@ metadata:
   name: postgres-cluster
   namespace: database
 spec:
-  instances: 1
+  instances: 3
   
   # Local environment resource settings
   resources:
     requests:
-      cpu: 1
-      memory: 2Gi
+      memory: 1Gi
+      cpu: 500m
     limits:
-      cpu: 2
-      memory: 4Gi
+      memory: 1Gi
 
   # Increased storage for local development
   storage:
-    size: 30Gi
+    size: 10Gi
     
   # For local dev, set fewer worker processes
   postgresql:
@@ -32,3 +31,7 @@ spec:
     customQueriesConfigMap:
     - name: postgres-custom-metrics
       key: custom-queries.yaml
+  
+  spec:
+  affinity:
+    podAntiAffinity: {}
