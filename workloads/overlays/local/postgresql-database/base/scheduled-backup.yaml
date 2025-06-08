@@ -4,7 +4,6 @@ metadata:
   name: postgres-scheduled-backup
   namespace: database
 spec:
-  backupOwnerReference: self
   cluster:
     name: postgres-cluster
   immediate: true
